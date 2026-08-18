@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Receipt Manager</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f2f2f2; margin:0; padding:20px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .card { background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:20px; }
+  h2 { margin-top:0; }
+  label { display:block; font-size:13px; color:#555; margin-top:10px; }
+  input, textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; font-family:inherit; }
+  button { padding:9px 18px; background:#2563eb; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-top:15px; }
+  .logout { float:right; background:#888; font-size:12px; padding:6px 12px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid #eee; font-size:14px; }
+  a.link { color:#2563eb; text-decoration:none; }
+  .actions a, .actions button { font-size:12px; margin-right:8px; padding:4px 8px; }
+  .del-btn { background:#d33; }
+  .row2 { display:flex; gap:10px; }
+  .row2 > div { flex:1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form method="POST" action="/admin/logout" style="display:inline;">
+    <button class="logout" type="submit">লগআউট</button>
+  </form>
+  <h2><%= editing ? 'রিসিট এডিট করো' : 'নতুন রিসিট বানাও' %></h2>
+
+  <div class="card">
+    <form method="POST" action="/admin/save">
+      <% if (editing) { %>
+        <input type="hidden" name="code" value="<%= editing.code %>">
+        <p style="font-size:13px; color:#666;">লিংক কোড: <strong><%= editing.code %></strong> (এটা পরিবর্তন হবে না)</p>
+      <% } %>
+      <div class="row2">
+        <div>
+          <label>Receipt No.</label>
+          <input name="receiptNo" value="<%= editing ? editing.receiptNo : '' %>">
+        </div>
+        <div>
+          <label>Date</label>
+          <input name="date" placeholder="DD-MM-YYYY" value="<%= editing ? editing.date : '' %>">
+        </div>
+      </div>
+      <label>Received with thanks from</label>
+      <input name="receivedFrom" value="<%= editing ? editing.receivedFrom : '' %>">
+
+      <div class="row2">
+        <div>
+          <label>Amount (সংখ্যায়)</label>
+          <input name="amount" value="<%= editing ? editing.amount : '' %>">
+        </div>
+        <div>
+          <label>Mode of Payment</label>
+          <input name="paymentMode" value="<%= editing ? editing.paymentMode : '' %>">
+        </div>
+      </div>
+      <label>Amount in Words</label>
+      <input name="amountInWords" value="<%= editing ? editing.amountInWords : '' %>">
+
+      <label>Reference</label>
+      <input name="reference" value="<%= editing ? editing.reference : '' %>">
+
+      <label>Note (ঐচ্ছিক)</label>
+      <textarea name="note" rows="2"><%= editing ? editing.note : '' %></textarea>
+
+      <button type="submit"><%= editing ? 'আপডেট করো' : 'তৈরি করো' %></button>
+      <% if (editing) { %> <a href="/admin" style="margin-left:10px; font-size:13px;">বাতিল</a> <% } %>
+    </form>
+  </div>
+
+  <h2>সব রিসিট</h2>
+  <div class="card">
+    <table>
+      <tr><th>কোড / লিংক</th><th>নাম</th><th>Amount</th><th>Updated</th><th>Action</th></tr>
+      <% Object.keys(receipts).forEach(code => { const r = receipts[code]; %>
+      <tr>
+        <td><a class="link" href="/<%= code %>" target="_blank"><%= baseUrl %>/<%= code %></a></td>
+        <td><%= r.receivedFrom %></td>
+        <td><%= r.amount %></td>
+        <td><%= new Date(r.updatedAt).toLocaleDateString() %></td>
+        <td class="actions">
+          <a href="/admin/edit/<%= code %>">এডিট</a>
+          <form method="POST" action="/admin/delete/<%= code %>" style="display:inline;" onsubmit="return confirm('মুছে ফেলতে চাও?');">
+            <button class="del-btn" type="submit">মুছো</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </table>
+  </div>
+</div>
+</body>
+</html>
