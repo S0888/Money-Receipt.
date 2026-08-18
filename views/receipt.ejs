@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Receipt - <%= code %></title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f2f2f2; margin:0; padding:20px; }
+  .sheet { max-width: 650px; margin: 0 auto; background:#fff; padding:30px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+  h1 { text-align:center; font-size:20px; letter-spacing:2px; margin-bottom:4px; }
+  .sub { text-align:center; color:#666; font-size:13px; margin-bottom:20px; }
+  table { width:100%; border-collapse: collapse; margin-top:15px; }
+  td { padding:8px 4px; vertical-align:top; font-size:14px; }
+  td.label { color:#666; width:180px; }
+  .amount-box { background:#f7f7f7; border:1px solid #ddd; padding:12px; margin-top:15px; border-radius:6px; }
+  .footer { margin-top:25px; font-size:12px; color:#888; text-align:center; }
+  .print-btn { display:block; margin:20px auto 0; padding:10px 24px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px; }
+  @media print { .print-btn { display:none; } body { background:#fff; padding:0; } .sheet { box-shadow:none; } }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <h1>MONEY RECEIPT</h1>
+    <div class="sub">Receipt Code: <%= code %></div>
+
+    <table>
+      <tr><td class="label">Receipt No.</td><td>: <%= receipt.receiptNo %></td></tr>
+      <tr><td class="label">Date</td><td>: <%= receipt.date %></td></tr>
+      <tr><td class="label">Received with thanks from</td><td>: <%= receipt.receivedFrom %></td></tr>
+      <tr><td class="label">Mode of Payment</td><td>: <%= receipt.paymentMode %></td></tr>
+      <tr><td class="label">Reference</td><td>: <%= receipt.reference %></td></tr>
+    </table>
+
+    <div class="amount-box">
+      <strong>The sum of:</strong> Tk. <%= receipt.amount %><br>
+      <em><%= receipt.amountInWords %></em>
+    </div>
+
+    <% if (receipt.note) { %>
+      <p style="font-size:13px; color:#555; margin-top:15px;"><%= receipt.note %></p>
+    <% } %>
+
+    <div class="footer">
+      This receipt is computer generated. Last updated: <%= new Date(receipt.updatedAt).toLocaleString() %>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">প্রিন্ট / PDF ডাউনলোড</button>
+  </div>
+</body>
+</html>
